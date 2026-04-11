@@ -1,0 +1,12 @@
+routeEnhancers:
+  NewsPlugin:
+    type: Extbase
+    limitToPages:
+      - 'page["doktype"] == 1'
+    extension: News
+    plugin: Pi1
+    routes:
+      - routePath: '/list/{page}'
+        _controller: 'News::list'
+      - routePath: '/detail/{news_title}'
+        _controller: 'News::detail'

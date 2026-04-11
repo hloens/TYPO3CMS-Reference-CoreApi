@@ -103,12 +103,19 @@ Within a configuration, an enhancer always evaluates the following properties:
     The short name of the enhancer as registered within
     :php:`$GLOBALS['TYPO3_CONF_VARS']`. This is mandatory.
 
+..  versionchanged:: 14.2
+    The :yaml:`limitToPages` option for route enhancers in the site configuration
+    now supports Symfony Expression Language expressions in addition to plain
+    page IDs.
+
 :yaml:`limitToPages`
-    An array of page IDs where this enhancer should be called. This is optional.
+    An array of page IDs or Symfony Expression Language expressions  where
+    this enhancer should be called. This is optional.
+
     This property (array) triggers an enhancer only for specific pages. In case
     of special plugin pages, it is recommended to enhance only those pages with
     the plugin to speed up performance of building page routes of all other
-    pages.
+    pages. See also :ref:`routing-limitToPages`.
 
 All enhancers allow to configure at least one route with the following
 configuration:
@@ -330,6 +337,57 @@ so instead of having `/en/.html` it would then result in
     PageType enhancer is only there for adding suffixes to an existing route /
     variant, but not to substitute something within the middle of a
     human-readable URL segment.
+
+..  _routing-limitToPages:
+
+Limiting pages with Symfony Expression Language expressions
+-----------------------------------------------------------
+
+..  versionchanged:: 14.2
+    The :yaml:`limitToPages` option for route enhancers in the site configuration
+    now supports Symfony Expression Language expressions in addition to plain
+    page IDs.
+
+String entries in the :yaml:`limitToPages` array are evaluated as Expression
+Language expressions.
+
+All entries in the array are OR-combined. Integer values are matched against the
+page ID, while string values are evaluated as expressions.
+To combine multiple conditions with AND logic, use the :yaml:`&&` operator within
+a single expression string.
+
+The following variables are available in expressions:
+
+*   :yaml:`page` - The full page record as an associative array (for example
+    :yaml:`page["doktype"]`, :yaml:`page["backend_layout"]`,
+    :yaml:`page["module"]`).
+*   :yaml:`site` - The current :php:`Site` object.
+*   :yaml:`siteLanguage` - The current :php:`SiteLanguage` object.
+
+Additionally, all default Expression Language functions such as :yaml:`like()`,
+:yaml:`env()`, and :yaml:`feature()` are available. Extensions can register
+additional functions and variables for the :yaml:`routing` Expression Language
+context via :file:`Configuration/ExpressionLanguage.php`.
+
+Match pages by their page type (doktype):
+
+..  literalinclude:: _codesnippets/_matchByPage.yaml
+    :caption: config/sites/<identifier>/config.yaml
+
+Match pages by their backend layout:
+
+..  literalinclude:: _codesnippets/_matchByBackendLayout.yaml
+    :caption: config/sites/<identifier>/config.yaml
+
+Combine integer page IDs with expression conditions (OR logic):
+
+..  literalinclude:: _codesnippets/_matchByPageAndUid.yaml
+    :caption: config/sites/<identifier>/config.yaml
+
+Use AND logic within a single expression:
+
+..  literalinclude:: _codesnippets/_matchByAnd.yaml
+    :caption: config/sites/<identifier>/config.yaml
 
 ..  index:: Routing; Aspects
 ..  _routing-advanced-routing-configuration-aspects:

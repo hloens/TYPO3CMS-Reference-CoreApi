@@ -1,0 +1,11 @@
+routeEnhancers:
+  ShopPlugin:
+    type: Extbase
+    limitToPages:
+      - 42
+      - 'page["module"] == "shop"'
+    extension: Shop
+    plugin: Products
+    routes:
+      - routePath: '/product/{product_title}'
+        _controller: 'Product::show'

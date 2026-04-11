@@ -1,0 +1,10 @@
+routeEnhancers:
+  BlogPlugin:
+    type: Extbase
+    limitToPages:
+      - 'page["backend_layout"] == "pagets__blog"'
+    extension: Blog
+    plugin: Posts
+    routes:
+      - routePath: '/post/{post_title}'
+        _controller: 'Post::show'
